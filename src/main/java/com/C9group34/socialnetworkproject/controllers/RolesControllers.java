@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/role")
-@CrossOrigin(origins = "{host}")
 public class RolesControllers {
 
     @Autowired
