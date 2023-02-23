@@ -1,0 +1,54 @@
+
+{
+  "created": {
+    "id": 0,
+    "name": "String name",
+    "surname": "String surname",
+    "email": "string@example.com",
+    "phone": "String",
+    "password": "String",
+    "ratings": 0.0
+  },
+  "getAll": [
+    {
+      "id": 1,
+      "name": "String name",
+      "surname": "String surname",
+      "email": "string@example.com",
+      "phone": "String",
+      "password": "String",
+      "ratings": 0.0
+    },
+    {
+      "id": 2,
+      "name": "String name",
+      "surname": "String surname",
+      "email": "string@example.com",
+      "phone": "String",
+      "password": "String",
+      "ratings": 0.0
+    }
+  ],
+  "createdRC": {
+    "id": 0,
+    "title": "String title",
+    "description": "Description"
+  },
+  "getAllRC": [
+    {
+      "id": 1,
+      "title": "String title",
+      "description": "Description"
+    },
+    {
+      "id": 2,
+      "title": "String title",
+      "description": "Description"
+    }
+  ],
+  "badRequest": {
+    "code": 400,
+    "status": "Bad Request",
+    "message": "Bad Request"
+  }
+}
