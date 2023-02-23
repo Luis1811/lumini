@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "{host}")
 public class UserController {
     /*public ResponseEntity<User> getUser(){
         return null;
