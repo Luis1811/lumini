@@ -5,6 +5,7 @@ import com.C9group34.socialnetworkproject.models.Role;
 import com.C9group34.socialnetworkproject.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 

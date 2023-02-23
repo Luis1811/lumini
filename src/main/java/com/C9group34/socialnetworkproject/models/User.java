@@ -3,19 +3,18 @@ package com.C9group34.socialnetworkproject.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity(name = "users")
-@Table(name = "users")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,9 +29,7 @@ public class User {
     @Column(name = "surname", nullable = false)
     private String surname;
 
-
     @Schema(required = true)
-
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -60,9 +57,32 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Conversation> conversations;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JoinColumn(name = "conversation_id")
-    private Conversation participant;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Participant> participant;
+
+    public void modifyAttributeValue(String attributeName, Object newValue) {
+        switch (attributeName) {
+            case "name":
+                this.name = (String) newValue;
+                break;
+            case "Surname":
+                this.surname = (String) newValue;
+                break;
+            case "email":
+                this.email = (String) newValue;
+                break;
+            case "phone":
+                this.phone = (String) newValue;
+                break;
+            case "password":
+                this.password = (String) newValue;
+                break;
+            case "ratings":
+                this.ratings = Double.valueOf ((String)  newValue);
+                break;
+        }
+    }
+
+
 
 }

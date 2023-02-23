@@ -58,26 +58,4 @@ public class Publication {
         return null;
     }
 
-
-    /*
-    public void modifyAttributeValue(String attributeName, Object newValue) {
-        switch (attributeName) {
-            case "title":
-                this.title = (String) newValue;
-                break;
-            case "descriptions":
-                this.description = (String) newValue;
-                break;
-            case "url_imgs":
-                this.urlImg = (String) newValue;
-                break;
-            case "ratings":
-                this.rating = Double.valueOf ((String)  newValue);
-                break;
-            case "status":
-                this.status = (String) newValue;
-                break;
-
-        }
-    }*/
 }

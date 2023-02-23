@@ -9,34 +9,31 @@ import lombok.NoArgsConstructor;
 
 import java.util.Optional;
 
-@Entity(name = "messages")
+@Entity(name = "participants")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Message {
+public class Participant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "content", nullable = false)
-    private String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JoinColumn(name = "sender_id")
-    private User user;
-
-    public Message(String content, Conversation conversation, User user) {
-        this.content = content;
+    public Participant(Conversation conversation, User user) {
         this.conversation = conversation;
         this.user = user;
+
     }
 
     public int getId() {
@@ -47,27 +44,19 @@ public class Message {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public int getConversation() {
-        return conversation.getId();
-    }
-
-    public void setConversation(Conversation conversation) {
-        this.conversation = conversation;
-    }
-
-    public int getUser() {
-        return user.getId();
+    public User getUser() {
+        return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Conversation getConversation() {
+        return conversation;
+    }
+
+    public void setConversation(Conversation conversation) {
+        this.conversation = conversation;
     }
 }

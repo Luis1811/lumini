@@ -1,8 +1,6 @@
 package com.C9group34.socialnetworkproject.controllers;
 
 import com.C9group34.socialnetworkproject.dto.UserDto;
-import com.C9group34.socialnetworkproject.exceptions.ExistingResourceException;
-import com.C9group34.socialnetworkproject.exceptions.ResourceNotFoundException;
 import com.C9group34.socialnetworkproject.models.User;
 import com.C9group34.socialnetworkproject.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,8 +15,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
-//@CrossOrigin(origins = "{host}")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
+    /*public ResponseEntity<User> getUser(){
+        return null;
+    }*/
 
     private final UserService userService;
 
@@ -43,13 +44,7 @@ public class UserController {
             )
     ) @RequestBody UserDto u){
 
-        User user = null;
-        try {
-            user = userService.register(u);
-        } catch (ExistingResourceException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
-        }
+        User user = userService.register(u);
 
         return new ResponseEntity(user, HttpStatus.CREATED);
 
@@ -69,25 +64,16 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity retrieveByIdWithFavoritePublications(@PathVariable Integer userId) {
+    public ResponseEntity retrieveByIdWithFavoritePublications(@PathVariable Integer userId){
 
-        try {
-            UserDto user = userService.retrieveByIdWithFavoritePublications(userId);
-            return new ResponseEntity(user, HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+        UserDto userDTO = userService.retrieveByIdWithFavoritePublications(userId);
+
+        return new ResponseEntity(userDTO, HttpStatus.OK);
+
     }
-
     @DeleteMapping("/{userId}")
     public ResponseEntity delete(@PathVariable Integer userId) {
-        try {
-            userService.delete(userId);
-        } catch (ResourceNotFoundException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+        userService.delete(userId);
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -100,27 +86,19 @@ public class UserController {
                             value = "{\"name\" : \"String\", \"surname\" : \"String\", \"email\" : \"String\", \"password\" : \"String\", \"phone\" : \"String\", \"ratings\" : 0.0 }"
                     )
             )
-    ) @RequestBody UserDto user) {
-        try {
-            userService.replace(userId, user);
-        } catch (ResourceNotFoundException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity(HttpStatus.NOT_MODIFIED);
-        }
+    ) @RequestBody User user) {
+
+        userService.replace(userId, user);
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity modify(@PathVariable Integer userId,
                                  @RequestBody Map<String, Object> fieldsToModify) {
-        try {
-            userService.modify(userId, fieldsToModify);
-        } catch (ResourceNotFoundException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
-        }
+        userService.modify(userId, fieldsToModify);
 
         return new ResponseEntity(HttpStatus.OK);
     }
-
+    
 }
