@@ -50,6 +50,7 @@ public class UserController {
     }
 
     @GetMapping("/all")
+    @CrossOrigin(origins = "*")
     @Operation(
             summary = "Get all users",
             responses = {
