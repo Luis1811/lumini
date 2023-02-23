@@ -52,7 +52,7 @@ public class UserController {
     @GetMapping("/all")
     @CrossOrigin(origins = "*")
     @Operation(
-            summary = "Get all users",
+            summary = "Get all user",
             responses = {
                     @ApiResponse(responseCode = "200",ref = "getAll"),
                     @ApiResponse(responseCode = "400",ref = "badRequest")
