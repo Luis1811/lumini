@@ -15,11 +15,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
+@CrossOrigin
 public class UserController {
-    /*public ResponseEntity<User> getUser(){
-        return null;
-    }*/
-
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -50,7 +47,6 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    @CrossOrigin(origins = "*")
     @Operation(
             summary = "Get all users",
             responses = {
