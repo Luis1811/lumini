@@ -1,72 +1,87 @@
 package com.C9group34.socialnetworkproject.service;
 
-
 import com.C9group34.socialnetworkproject.dto.UserDto;
 import com.C9group34.socialnetworkproject.exceptions.ExistingResourceException;
 import com.C9group34.socialnetworkproject.exceptions.ResourceNotFoundException;
 import com.C9group34.socialnetworkproject.models.User;
 import com.C9group34.socialnetworkproject.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final PublicationService publicationService;
-    private final FavoritePublicationService favoritePublicationService;
+    @Autowired
+    private  UserRepository userRepository;
 
-
-    public UserService(UserRepository userRepository, PublicationService publicationService,
-                       FavoritePublicationService favoritePublicationService) {
-        this.userRepository = userRepository;
-        this.publicationService = publicationService;
-        this.favoritePublicationService = favoritePublicationService;
-    }
-
-    public User register(UserDto userDto) {
+    @Transactional
+    public User register(UserDto userDto) throws ExistingResourceException {
         User user = mapToEntity(userDto);
         checkForExistingUser(user.getId());
         user = userRepository.save(user);
         return user;
 
     }
-
+    @Transactional
     public List<UserDto> retrieveAll() {
         List<User> users = userRepository.findAll();
         return users.stream()
                 .map(user -> mapToDTO(user))
                 .collect(Collectors.toList());
     }
+    @Transactional
+    public Optional<UserDto> retrieveById(Integer userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return Optional.of(mapToDTO(user.get()));
+    }
 
-    public UserDto retrieveById(Integer userId) {
+
+    @Transactional
+    public UserDto retrieveByIdWithFavoritePublications(Integer userId) throws ResourceNotFoundException {
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isEmpty()) {
             throw new ResourceNotFoundException("El id del usuario que está buscando no existe.");
         }
 
-        return mapToDTO(user.get());
+        return mapToDTOWithFavoritePublications(user).get();
     }
 
-
-    public UserDto retrieveByIdWithFavoritePublications(Integer userId){
+    /*@Transactional
+    public UserDto retrieveByIdWithPublications(Integer userId) throws ResourceNotFoundException {
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isEmpty()) {
             throw new ResourceNotFoundException("El id del usuario que está buscando no existe.");
         }
 
-        return mapToDTOWithFavoritePublications(user);
+        return mapToDTOWithPublications(user).get();
+    }*/
+
+    private Optional<UserDto> mapToDTOWithPublications(Optional<User> optionalUser) {
+        if(optionalUser.isEmpty()){
+            return Optional.empty();
+        }
+        User user = optionalUser.get();
+        return Optional.ofNullable(UserDto.builder().id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .password(user.getPassword())
+                .ratings(user.getRatings())
+                .build());
     }
 
 
-    public void delete(Integer userId) {
+    @Transactional
+    public void delete(Integer userId) throws ResourceNotFoundException {
         try {
             userRepository.deleteById(userId);
         } catch (EmptyResultDataAccessException e) {
@@ -74,69 +89,96 @@ public class UserService {
         }
     }
 
-    public void replace(Integer userId, User userDTO) {
+    @Transactional
+    public void replace(Integer userId, UserDto userDTO) throws ResourceNotFoundException {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new ResourceNotFoundException();
         }
         User updatedUser;
         User userToReplace = user.get();
-        updatedUser = new User().builder().id(userToReplace.getId())
+        new User();
+        updatedUser = User.builder().id(userToReplace.getId())
                 .name(userDTO.getName())
                 .surname(userDTO.getSurname())
                 .email(userDTO.getEmail())
                 .phone(userDTO.getPhone())
                 .password(userDTO.getPassword())
                 .ratings(userDTO.getRatings()).build();
-
-
         userRepository.save(updatedUser);
     }
 
-    public void modify(Integer userId, Map<String, Object> fieldsToModify) {
+    @Transactional
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+
+    // no usado
+    /*
+    @Transactional
+    public void modify(Integer userId, Map<String, Object> fieldsToModify) throws ResourceNotFoundException {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new ResourceNotFoundException();
         }
+
         User userToModify = user.get();
-        fieldsToModify.forEach((key, value) -> userToModify.modifyAttributeValue(key, value));
-        userRepository.save(userToModify);
-    }
+        User userMofificated = User.builder()
+                .id(userToModify.getId())
+                .name(userToModify.getName())
+                .surname(userToModify.getSurname())
+                .email(userToModify.getEmail())
+                .phone(userToModify.getPhone())
+                .role(userToModify.getRole())
+                .build();
+        userRepository.save(userMofificated);
+    }*/
 
 
-    //estos serian para mapear
     private User mapToEntity(UserDto userDto) {
-        userDto.setRatings(0.0);
-        User user = new User().builder().name(userDto.getName())
+
+        new User();
+        return User.builder().name(userDto.getName())
                 .surname(userDto.getSurname())
                 .email(userDto.getEmail())
                 .phone(userDto.getPhone())
                 .password(userDto.getPassword())
-                .ratings(userDto.getRatings()).build();
-        return user;
+                .ratings(userDto.getRatings())
+                .build();
     }
-
 
     private UserDto mapToDTO(User user) {
 
-        UserDto userDto = new UserDto(user.getId(), user.getName(), user.getSurname(), user.getEmail(),
-                user.getPhone(), user.getPassword(), user.getRatings());
-
-        return userDto;
+        return UserDto.builder().id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .password(user.getPassword())
+                .ratings(user.getRatings())
+                .build();
     }
 
-    private UserDto mapToDTOWithFavoritePublications(Optional<User> user) {
-
-        UserDto userDto = new UserDto(user.get().getId(), user.get().getName(), user.get().getSurname(), user.get().getEmail(),
-                user.get().getPhone(), user.get().getPassword(), user.get().getRatings());
-        return userDto;
+    private Optional<UserDto> mapToDTOWithFavoritePublications(Optional<User> optionalUser) {
+        if(optionalUser.isEmpty()){
+            return Optional.empty();
+        }
+        User user = optionalUser.get();
+        return Optional.ofNullable(UserDto.builder().id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .password(user.getPassword())
+                .ratings(user.getRatings())
+                .build());
     }
 
-    //metodo para la exception
-    private void checkForExistingUser(Integer userId) {
+
+    private void checkForExistingUser(Integer userId) throws ExistingResourceException {
         if (userRepository.existsById(userId)) {
             throw new ExistingResourceException("El usuario que está intentando crear ya existe.");
         }
     }
-
 }

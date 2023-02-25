@@ -3,10 +3,7 @@ package com.C9group34.socialnetworkproject.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -44,7 +41,7 @@ public class Publication {
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
     private List<FavoritePublication> favoritePublications;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -58,4 +55,26 @@ public class Publication {
         return null;
     }
 
+
+    /*
+    public void modifyAttributeValue(String attributeName, Object newValue) {
+        switch (attributeName) {
+            case "title":
+                this.title = (String) newValue;
+                break;
+            case "descriptions":
+                this.description = (String) newValue;
+                break;
+            case "url_imgs":
+                this.urlImg = (String) newValue;
+                break;
+            case "ratings":
+                this.rating = Double.valueOf ((String)  newValue);
+                break;
+            case "status":
+                this.status = (String) newValue;
+                break;
+
+        }
+    }*/
 }
