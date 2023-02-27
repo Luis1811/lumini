@@ -1,6 +1,9 @@
-
 {
-  "created": {
+  "login": {
+    "token": "String token"
+  },
+  "userDeleted": "USER DELETED SUCCESSFUL",
+  "user": {
     "id": 0,
     "name": "String name",
     "surname": "String surname",

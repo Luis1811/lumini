@@ -9,12 +9,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -29,9 +28,10 @@ public class UserController {
 
     @PostMapping("/new")
     @Operation(
+            security = @SecurityRequirement(name = "token"),
             summary = "Create new use",
             responses = {
-                    @ApiResponse(responseCode = "201",ref = "created"),
+                    @ApiResponse(responseCode = "201",ref = "user"),
                     @ApiResponse(responseCode = "400",ref = "badRequest")
             }
     )
@@ -70,6 +70,13 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
+    @Operation(
+            summary = "Get user by ID",
+            responses = {
+                    @ApiResponse(responseCode = "200",ref = "user"),
+                    @ApiResponse(responseCode = "400",ref = "badRequest")
+            }
+    )
     public ResponseEntity retrieveByIdWithFavoritePublications(@PathVariable Integer userId) {
 
         try {
@@ -82,6 +89,13 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
+    @Operation(
+            summary = "Delete user by ID",
+            responses = {
+                    @ApiResponse(responseCode = "200",ref = "userDeleted"),
+                    @ApiResponse(responseCode = "400",ref = "badRequest")
+            }
+    )
     public ResponseEntity delete(@PathVariable Integer userId) {
         try {
             userService.delete(userId);
@@ -90,7 +104,7 @@ public class UserController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>("USER DELETED SUCCESSFUL", HttpStatus.OK);
     }
 
     @PutMapping("/{userId}")

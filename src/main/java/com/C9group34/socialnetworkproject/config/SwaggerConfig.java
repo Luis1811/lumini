@@ -31,29 +31,41 @@ public class SwaggerConfig {
 
         JsonReadFileObject jsonReadFileObject = new JsonReadFileObject();
 
-        ApiResponse created = new ApiResponse().content(
+        ApiResponse login = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
                         new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
-                                new Example().value(jsonReadFileObject.read().get("created").toString())))
-        ).description("User created successful");
+                                new Example().value(jsonReadFileObject.read().get("login").toString())))
+        );
+
+        ApiResponse user = new ApiResponse().content(
+                new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
+                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                                new Example().value(jsonReadFileObject.read().get("user").toString())))
+        );
 
         ApiResponse getAll = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
                         new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
                                 new Example().value(jsonReadFileObject.read().get("getAll").toString())))
-        ).description("Get all users response");
+        );
 
         ApiResponse createdRC = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
                         new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
                                 new Example().value(jsonReadFileObject.read().get("createdRC").toString())))
-        ).description("Element created successful");
+        );
 
         ApiResponse getAllRC = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
                         new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
                                 new Example().value(jsonReadFileObject.read().get("getAllRC").toString())))
-        ).description("Get all element response");
+        );
+
+        ApiResponse userDeleted = new ApiResponse().content(
+                new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
+                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                                new Example().value(jsonReadFileObject.read().get("userDeleted").toString())))
+        );
 
         ApiResponse badRequest = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
@@ -62,10 +74,12 @@ public class SwaggerConfig {
         ).description("Bad request");
 
         Components components = new Components();
-        components.addResponses("created",created);
+        components.addResponses("login", login);
+        components.addResponses("user",user);
         components.addResponses("getAll",getAll);
         components.addResponses("createdRC",createdRC);
         components.addResponses("getAllRC",getAllRC);
+        components.addResponses("userDeleted",userDeleted);
         components.addResponses("badRequest",badRequest);
 
         return new OpenAPI()
