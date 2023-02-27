@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/favorites")
+@CrossOrigin
 public class FavoritePublicationController {
 
     @Autowired

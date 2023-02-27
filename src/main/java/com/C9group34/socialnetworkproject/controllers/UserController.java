@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
-//@CrossOrigin(origins = "${host}")
+@CrossOrigin
 public class UserController {
 
     private final UserService userService;
