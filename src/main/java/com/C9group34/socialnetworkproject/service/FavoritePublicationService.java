@@ -54,7 +54,7 @@ public class FavoritePublicationService {
         }
         List<FavoritePublication> favoritePublications = favoriteRepository.findAll();
         return favoritePublications.stream()
-                .map(favoritePublication -> mapToDTO(favoritePublication))
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 

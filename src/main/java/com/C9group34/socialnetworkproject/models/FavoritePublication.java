@@ -26,4 +26,12 @@ public class FavoritePublication {
     @JoinColumn(name = "publication_id")
     private Publication publication;
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setOrder(User u) {
+        this.user = u;
+    }
+
 }

@@ -9,29 +9,30 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
 @CrossOrigin
 public class UserController {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/new")
     @Operation(
-            security = @SecurityRequirement(name = "token"),
             summary = "Create new use",
+            description = "With endpoint can you created a new user",
             responses = {
-                    @ApiResponse(responseCode = "201",ref = "user"),
+                    @ApiResponse(responseCode = "201",ref = "created"),
                     @ApiResponse(responseCode = "400",ref = "badRequest")
             }
     )
@@ -39,7 +40,7 @@ public class UserController {
             content = @Content(
                     mediaType = "application/json",
                     examples = @ExampleObject(
-                            value = "{\"name\" : \"Luis\", \"surname\" : \"Uzcategui\", \"email\" : \"luis@example.com\", \"password\" : \"123456789\", \"phone\" : \"+593979010717\" }"
+                            value = "{\"name\" : \"Luis\", \"surname\" : \"Uzcategui\", \"email\" : \"luis@example.com\", \"password\" : \"123456789\", \"phone\" : \"+593979010717\", \"img_profile\" : \"URL\" }"
                     )
             )
     ) @RequestBody UserDto u){
@@ -59,6 +60,7 @@ public class UserController {
     @GetMapping("/all")
     @Operation(
             summary = "Get all users",
+            description = "This endpoint is for get all users",
             responses = {
                     @ApiResponse(responseCode = "200",ref = "getAll"),
                     @ApiResponse(responseCode = "400",ref = "badRequest")
@@ -69,28 +71,30 @@ public class UserController {
         return new ResponseEntity(userService.retrieveAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("{userId}")
     @Operation(
             summary = "Get user by ID",
+            description = "With this endpoint can you get to a user by ID",
             responses = {
                     @ApiResponse(responseCode = "200",ref = "user"),
                     @ApiResponse(responseCode = "400",ref = "badRequest")
             }
     )
-    public ResponseEntity retrieveByIdWithFavoritePublications(@PathVariable Integer userId) {
+    public ResponseEntity retrieveById(@PathVariable Integer userId){
 
         try {
-            UserDto user = userService.retrieveByIdWithFavoritePublications(userId);
+            UserDto user = userService.retrieveById(userId);
             return new ResponseEntity(user, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity("el usuario no ha sido encontrado", HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/{userId}")
     @Operation(
-            summary = "Delete user by ID",
+            summary = "Delete a user",
+            description = "This endpoint is for delete a user",
             responses = {
                     @ApiResponse(responseCode = "200",ref = "userDeleted"),
                     @ApiResponse(responseCode = "400",ref = "badRequest")
@@ -104,10 +108,14 @@ public class UserController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>("USER DELETED SUCCESSFUL", HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PutMapping("/{userId}")
+    @Operation(
+            summary = "Update a user",
+            description = "This endpoint is for update a user"
+    )
     public ResponseEntity replace(@PathVariable Integer userId,@io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(
                     mediaType = "application/json",

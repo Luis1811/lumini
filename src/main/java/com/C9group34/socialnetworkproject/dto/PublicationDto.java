@@ -1,10 +1,10 @@
 package com.C9group34.socialnetworkproject.dto;
 
 
-import jakarta.persistence.*;
 import lombok.*;
 
 
+import java.io.File;
 import java.util.List;
 
 @Builder
@@ -17,9 +17,10 @@ public class PublicationDto {
     private Integer id;
     private String title;
     private String description;
-    private String urlImg;
+    private String img;
     private Double rating;
     private String status;
     private List<CommentDto> comments;
+    private Integer category;
 
 }

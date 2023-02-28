@@ -4,6 +4,8 @@ import com.C9group34.socialnetworkproject.dto.PublicationDto;
 import com.C9group34.socialnetworkproject.exceptions.ResourceNotFoundException;
 import com.C9group34.socialnetworkproject.service.PublicationService;
 import com.C9group34.socialnetworkproject.service.UserService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +23,22 @@ public class PublicationController {
     private  UserService userService;
 
     @PostMapping
-    public ResponseEntity create(@PathVariable Integer userId,
-                                 @RequestBody PublicationDto publicationDTO) {
+    public ResponseEntity create(@PathVariable Integer userId,@io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(
+                            value = "{ \"title\": \"string\", \"description\": \"string\", \"img\": \"string\", \"category\": 1 }"
+                    )
+            )
+    ) @RequestBody PublicationDto publicationDTO) {
 
         publicationService.create(publicationDTO , userId);
         return new ResponseEntity<>(publicationDTO.getId(), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity getAll(){
+        return new ResponseEntity(publicationService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "publications")
@@ -31,12 +32,12 @@ public class Publication {
     @Column(name = "ratings", nullable = false)
     private Double rating;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private String status;
 
 
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
     private List<FavoritePublication> favoritePublications;
@@ -51,30 +52,29 @@ public class Publication {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    private Double calculateRating(){
+    public Double calculateRating(){
         return null;
     }
 
+    public User getUser() {
+        return user;
+    }
 
-    /*
-    public void modifyAttributeValue(String attributeName, Object newValue) {
-        switch (attributeName) {
-            case "title":
-                this.title = (String) newValue;
-                break;
-            case "descriptions":
-                this.description = (String) newValue;
-                break;
-            case "url_imgs":
-                this.urlImg = (String) newValue;
-                break;
-            case "ratings":
-                this.rating = Double.valueOf ((String)  newValue);
-                break;
-            case "status":
-                this.status = (String) newValue;
-                break;
+    public void setUser(User u) {
+        this.user = u;
+    }
 
-        }
-    }*/
+    public void setCategory(Category c){
+        this.category = c;
+    }
+
+    public void addComment(Comment c) {
+        comments.add(c);
+        c.setPublication(this);
+    }
+
+    public void removeComment(Comment c) {
+        comments.remove(c);
+        c.setPublication(null);
+    }
 }

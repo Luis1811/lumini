@@ -10,7 +10,8 @@
     "email": "string@example.com",
     "phone": "String",
     "password": "String",
-    "ratings": 0.0
+    "ratings": 0.0,
+    "publications": []
   },
   "getAll": [
     {

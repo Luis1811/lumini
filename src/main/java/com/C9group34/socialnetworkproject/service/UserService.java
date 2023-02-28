@@ -3,6 +3,9 @@ package com.C9group34.socialnetworkproject.service;
 import com.C9group34.socialnetworkproject.dto.UserDto;
 import com.C9group34.socialnetworkproject.exceptions.ExistingResourceException;
 import com.C9group34.socialnetworkproject.exceptions.ResourceNotFoundException;
+import com.C9group34.socialnetworkproject.models.Conversation;
+import com.C9group34.socialnetworkproject.models.FavoritePublication;
+import com.C9group34.socialnetworkproject.models.Publication;
 import com.C9group34.socialnetworkproject.models.User;
 import com.C9group34.socialnetworkproject.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -10,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,7 +29,7 @@ public class UserService {
 
     @Transactional
     public User register(UserDto userDto) throws ExistingResourceException {
-        User user = mapToEntity(userDto);
+        User user = createNewEntity(userDto);
         checkForExistingUser(user.getId());
         user = userRepository.save(user);
         return user;
@@ -31,52 +38,18 @@ public class UserService {
     @Transactional
     public List<UserDto> retrieveAll() {
         List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(user -> mapToDTO(user))
-                .collect(Collectors.toList());
+        List userDtoList = new ArrayList<UserDto>();
+        users.forEach(user -> userDtoList.add(mapToDTO(user)));
+        return userDtoList;
     }
     @Transactional
-    public Optional<UserDto> retrieveById(Integer userId) {
-        Optional<User> user = userRepository.findById(userId);
-        return Optional.of(mapToDTO(user.get()));
-    }
-
-
-    @Transactional
-    public UserDto retrieveByIdWithFavoritePublications(Integer userId) throws ResourceNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-
-        if (user.isEmpty()) {
-            throw new ResourceNotFoundException("El id del usuario que está buscando no existe.");
+    public UserDto retrieveById(Integer userId) throws ResourceNotFoundException {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(userOptional.isEmpty()){
+            throw  new ResourceNotFoundException("El usuario no ha sido encontrado");
         }
 
-        return mapToDTOWithFavoritePublications(user).get();
-    }
-
-    /*@Transactional
-    public UserDto retrieveByIdWithPublications(Integer userId) throws ResourceNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-
-        if (user.isEmpty()) {
-            throw new ResourceNotFoundException("El id del usuario que está buscando no existe.");
-        }
-
-        return mapToDTOWithPublications(user).get();
-    }*/
-
-    private Optional<UserDto> mapToDTOWithPublications(Optional<User> optionalUser) {
-        if(optionalUser.isEmpty()){
-            return Optional.empty();
-        }
-        User user = optionalUser.get();
-        return Optional.ofNullable(UserDto.builder().id(user.getId())
-                .name(user.getName())
-                .surname(user.getSurname())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .password(user.getPassword())
-                .ratings(user.getRatings())
-                .build());
+        return mapToDTO(userOptional.get());
     }
 
 
@@ -104,44 +77,48 @@ public class UserService {
                 .email(userDTO.getEmail())
                 .phone(userDTO.getPhone())
                 .password(userDTO.getPassword())
+                .publications(new ArrayList<Publication>())
+                .favoritePublications(new ArrayList<FavoritePublication>())
+                .conversations(new ArrayList<Conversation>())
                 .ratings(userDTO.getRatings()).build();
         userRepository.save(updatedUser);
     }
 
     @Transactional
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<User> getUserByEmail(String email) {
+        return Optional.ofNullable(userRepository.findByEmail(email));
     }
 
 
-    // no usado
-    /*
-    @Transactional
-    public void modify(Integer userId, Map<String, Object> fieldsToModify) throws ResourceNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new ResourceNotFoundException();
-        }
-
-        User userToModify = user.get();
-        User userMofificated = User.builder()
-                .id(userToModify.getId())
-                .name(userToModify.getName())
-                .surname(userToModify.getSurname())
-                .email(userToModify.getEmail())
-                .phone(userToModify.getPhone())
-                .role(userToModify.getRole())
-                .build();
-        userRepository.save(userMofificated);
-    }*/
-
-
-    private User mapToEntity(UserDto userDto) {
+    private User createNewEntity(UserDto userDto){
+        String imgUrl = "";
         new User();
         return User.builder().name(userDto.getName())
                 .surname(userDto.getSurname())
                 .email(userDto.getEmail())
                 .phone(userDto.getPhone())
+                .imgProfile(imgUrl)
+                .publications(new ArrayList<Publication>())
+                .favoritePublications(new ArrayList<FavoritePublication>())
+                .conversations(new ArrayList<Conversation>())
+                .password(userDto.getPassword())
+                .ratings(userDto.getRatings())
+                .build();
+    }
+
+
+    private User mapToEntity(UserDto userDto) {
+
+        String imgUrl = "";
+        new User();
+        return User.builder().name(userDto.getName())
+                .surname(userDto.getSurname())
+                .email(userDto.getEmail())
+                .phone(userDto.getPhone())
+                .imgProfile(imgUrl)
+                .publications(userDto.getPublications())
+                .favoritePublications(userDto.getFavoritePublications())
+                .conversations(userDto.getConversations())
                 .password(userDto.getPassword())
                 .ratings(userDto.getRatings())
                 .build();
@@ -149,11 +126,17 @@ public class UserService {
 
     private UserDto mapToDTO(User user) {
 
+        // agregado de prueba
+        File img = new File("bg");
         return UserDto.builder().id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .imgProfile(img)
+                .publications(user.getPublications())
+                .favoritePublications(user.getFavoritePublications())
+                .conversations(user.getConversations())
                 .password(user.getPassword())
                 .ratings(user.getRatings())
                 .build();

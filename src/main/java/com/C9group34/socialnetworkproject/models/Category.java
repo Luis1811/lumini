@@ -25,5 +25,10 @@ public class Category{
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Publication> publications;
 
+    public void addPublication(Publication p) {
+        publications.add(p);
+        p.setCategory(this);
+    }
+
 
 }

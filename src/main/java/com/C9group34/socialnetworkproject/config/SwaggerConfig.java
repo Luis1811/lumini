@@ -87,6 +87,7 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Documentation Lumini")
                         .version("1.0.1")
-                        .description("API rest for social media"));
+                        .description("API rest for social network. use this data for the tests: email: test@gmai.com, password: test1234. This user have id 1")
+                );
     }
 }
