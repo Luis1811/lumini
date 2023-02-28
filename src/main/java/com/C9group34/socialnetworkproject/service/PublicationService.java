@@ -35,7 +35,7 @@ public class PublicationService {
     }
 
 
-    public void create(PublicationDto publicationDTO, Integer userId) {
+    public Publication create(PublicationDto publicationDTO, Integer userId) {
         Optional<Category> categoryOptional = categoryRepository.findById(publicationDTO.getCategory());
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent()){
@@ -44,10 +44,12 @@ public class PublicationService {
             Publication publication = mapToEntity(publicationDTO, user, category);
             user.addPublication(publication);
             category.addPublication(publication);
-            publicationRepository.save(publication);
+            Publication publicationCreade = publicationRepository.save(publication);
             
             user.getPublications().stream().forEach(p ->System.out.println(p.getTitle()));
+        return publicationCreade;
         }
+        return null;
     }
 
 
@@ -95,7 +97,7 @@ public class PublicationService {
         updatedPublication = new Publication().builder().id(publicationToReplace.getId())
                 .title(publicationDto.getTitle())
                 .description(publicationDto.getDescription())
-                .urlImg("")
+                .urlImg(publicationDto.getImg())
                 .user(publicationToReplace.getUser())
                 .build();
         publicationRepository.save(updatedPublication);
@@ -105,11 +107,12 @@ public class PublicationService {
 
 
     private Publication mapToEntity(PublicationDto publicationDto , User user, Category category) {
+        Double ratings = 0.0;
         return new Publication().builder()
                 .title(publicationDto.getTitle())
                 .description(publicationDto.getDescription())
-                .urlImg(user.getImgProfile())
-                .rating(publicationDto.getRating())
+                .urlImg(publicationDto.getImg())
+                .rating(ratings)
                 .user(user)
                 .category(category)
                 .build();

@@ -30,7 +30,6 @@ public class PublicationController {
 
     @PostMapping
     @Operation(
-            security = @SecurityRequirement(name = "token"),
             summary = "Create publication",
             description = "This endpoint is for create a publication of a user"
     )
@@ -47,8 +46,7 @@ public class PublicationController {
     {
         String id = jwt.getKey(token);
         if (jwt.verifyToken(token)) {
-            publicationService.create(publicationDTO, Integer.valueOf(id));
-            return new ResponseEntity<>(publicationDTO.getId(), HttpStatus.CREATED);
+            return new ResponseEntity<>(publicationService.create(publicationDTO, Integer.valueOf(id)), HttpStatus.CREATED);
         }
         return new ResponseEntity<>("Accion no realizada", HttpStatus.UNAUTHORIZED);
 
