@@ -1,7 +1,6 @@
 {
-  "login": {
-    "token": "String token"
-  },
+  "login": "String token",
+  "logged": true,
   "userDeleted": "USER DELETED SUCCESSFUL",
   "user": {
     "id": 0,

@@ -36,7 +36,8 @@ public class Conversation {
         return user;
     }
 
-    public void setOrder(User u) {
+    public void setUser(User u) {
+
         this.user = u;
     }
 

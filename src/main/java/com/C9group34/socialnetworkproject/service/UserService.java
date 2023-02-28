@@ -13,13 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -91,13 +87,12 @@ public class UserService {
 
 
     private User createNewEntity(UserDto userDto){
-        String imgUrl = "";
         new User();
         return User.builder().name(userDto.getName())
                 .surname(userDto.getSurname())
                 .email(userDto.getEmail())
                 .phone(userDto.getPhone())
-                .imgProfile(imgUrl)
+                .imgProfile(userDto.getImgProfile())
                 .publications(new ArrayList<Publication>())
                 .favoritePublications(new ArrayList<FavoritePublication>())
                 .conversations(new ArrayList<Conversation>())
@@ -115,7 +110,7 @@ public class UserService {
                 .surname(userDto.getSurname())
                 .email(userDto.getEmail())
                 .phone(userDto.getPhone())
-                .imgProfile(imgUrl)
+                .imgProfile(userDto.getImgProfile())
                 .publications(userDto.getPublications())
                 .favoritePublications(userDto.getFavoritePublications())
                 .conversations(userDto.getConversations())
@@ -126,14 +121,12 @@ public class UserService {
 
     private UserDto mapToDTO(User user) {
 
-        // agregado de prueba
-        File img = new File("bg");
         return UserDto.builder().id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .imgProfile(img)
+                .imgProfile(user.getImgProfile())
                 .publications(user.getPublications())
                 .favoritePublications(user.getFavoritePublications())
                 .conversations(user.getConversations())

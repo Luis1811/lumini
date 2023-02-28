@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+
 import java.util.Objects;
 
 import java.util.List;
@@ -16,7 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,12 +82,15 @@ public class User {
 
     public void addFavoritePublication(FavoritePublication fp) {
         favoritePublications.add(fp);
-        fp.setOrder(this);
+
+        fp.setUser(this);
+
     }
 
     public void removeFavoritePublication(FavoritePublication fp) {
         favoritePublications.remove(fp);
-        fp.setOrder(null);
+        fp.setUser(null);
+
     }
 
 
@@ -95,12 +98,14 @@ public class User {
 
     public void addConversation(Conversation c) {
         conversations.add(c);
-        c.setOrder(this);
+        c.setUser(this);
+
     }
 
     public void removeConversation(Conversation c) {
         conversations.remove(c);
-        c.setOrder(null);
+        c.setUser(null);
+
     }
 
 }

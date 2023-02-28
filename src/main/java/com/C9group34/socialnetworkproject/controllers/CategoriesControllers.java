@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class CategoriesControllers {
 
     @PostMapping("/create")
     @Operation(
+            security = @SecurityRequirement(name = "Authorization"),
             summary = "Create a new category",
             description = "This Endpoint is for create a new category for the social network Lumini.\n" +
                           "The properties required they are specified in the section of Schema- Category >",
@@ -38,7 +40,7 @@ public class CategoriesControllers {
                             value = "{\"title\" : \"Illustrations\", \"description\" : \"Pictures illustrations\" }"
                     )
             )
-    ) @RequestBody Category c){
+    )  @RequestBody Category c){
         return new ResponseEntity(categoryService.create(c), HttpStatus.CREATED);
     }
 

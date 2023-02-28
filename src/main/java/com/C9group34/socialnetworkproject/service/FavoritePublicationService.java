@@ -32,7 +32,6 @@ public class FavoritePublicationService {
     public FavoritePublicationDto create( Integer userId, Integer publicationId) throws ExistingResourceException, ResourceNotFoundException {
         Optional<User> u = userRepository.findById(userId);
         Optional<Publication> p = publicationRepository.findById(publicationId);
-        System.out.println(p.get());
         if (u.isEmpty()) {
             throw new ResourceNotFoundException("usuario no encontrado");
         }
@@ -53,6 +52,7 @@ public class FavoritePublicationService {
             throw new ResourceNotFoundException("El id del usuario que está ingresando no existe.");
         }
         List<FavoritePublication> favoritePublications = favoriteRepository.findAll();
+
         return favoritePublications.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -74,8 +74,8 @@ public class FavoritePublicationService {
 
     private FavoritePublicationDto mapToDTO(FavoritePublication fp) {
         return new FavoritePublicationDto().builder()
-                .publication(fp.getPublication())
-                .user(fp.getUser()).build();
+                .publicationId(fp.getPublication().getId())
+                .userId(fp.getUser().getId()).build();
     }
 
 }

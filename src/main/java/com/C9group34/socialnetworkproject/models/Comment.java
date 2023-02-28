@@ -29,13 +29,16 @@ public class Comment {
     @JoinColumn(name = "creator_id")
     private User user;
 
-    public  Publication getPublication() {
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User u) {
+        this.user = u;
+    }
+    public Publication getPublication() {
         return publication;
     }
-
-    public void setPublication(Publication p) {
-        this.publication = p;
-    }
+    public void setPublication(Publication p) { this.publication = p; }
 
 
 }

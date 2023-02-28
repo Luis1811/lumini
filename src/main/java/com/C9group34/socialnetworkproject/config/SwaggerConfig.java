@@ -37,6 +37,12 @@ public class SwaggerConfig {
                                 new Example().value(jsonReadFileObject.read().get("login").toString())))
         );
 
+        ApiResponse logged = new ApiResponse().content(
+                new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
+                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                                new Example().value(jsonReadFileObject.read().get("logged").toString())))
+        );
+
         ApiResponse user = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
                         new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
@@ -75,6 +81,7 @@ public class SwaggerConfig {
 
         Components components = new Components();
         components.addResponses("login", login);
+        components.addResponses("logged", logged);
         components.addResponses("user",user);
         components.addResponses("getAll",getAll);
         components.addResponses("createdRC",createdRC);

@@ -12,8 +12,6 @@ import com.C9group34.socialnetworkproject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,8 +96,6 @@ public class PublicationService {
                 .title(publicationDto.getTitle())
                 .description(publicationDto.getDescription())
                 .urlImg("")
-                .rating(publicationDto.getRating())
-                .status(publicationDto.getStatus())
                 .user(publicationToReplace.getUser())
                 .build();
         publicationRepository.save(updatedPublication);
@@ -107,15 +103,13 @@ public class PublicationService {
     }
 
 
+
     private Publication mapToEntity(PublicationDto publicationDto , User user, Category category) {
-        Double ratings = 0.0;
-        String status = "active";
         return new Publication().builder()
                 .title(publicationDto.getTitle())
                 .description(publicationDto.getDescription())
-                .urlImg(publicationDto.getImg())
-                .rating(ratings)
-                .status(status)
+                .urlImg(user.getImgProfile())
+                .rating(publicationDto.getRating())
                 .user(user)
                 .category(category)
                 .build();
@@ -123,13 +117,13 @@ public class PublicationService {
 
     private PublicationDto mapToDTO(Publication publication) {
         // agregado de prueba
-        File img = new File("df");
+
         PublicationDto.PublicationDtoBuilder publicationDto = new PublicationDto().builder().id(publication.getId())
                 .title(publication.getTitle())
                 .description(publication.getDescription())
-                .img(String.valueOf(img))
-                .rating(publication.getRating())
-                .status(publication.getStatus());
+                .img(publication.getUrlImg())
+                .rating(publication.getRating());
+
 
         return publicationDto.build();
     }

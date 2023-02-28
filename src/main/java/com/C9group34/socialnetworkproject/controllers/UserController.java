@@ -5,18 +5,17 @@ import com.C9group34.socialnetworkproject.exceptions.ExistingResourceException;
 import com.C9group34.socialnetworkproject.exceptions.ResourceNotFoundException;
 import com.C9group34.socialnetworkproject.models.User;
 import com.C9group34.socialnetworkproject.service.UserService;
+import com.C9group34.socialnetworkproject.util.JWTutil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -25,6 +24,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JWTutil jwt;
 
 
     @PostMapping("/new")
@@ -71,27 +73,29 @@ public class UserController {
         return new ResponseEntity(userService.retrieveAll(), HttpStatus.OK);
     }
 
-    @GetMapping("{userId}")
+    @GetMapping("/get")
     @Operation(
-            summary = "Get user by ID",
-            description = "With this endpoint can you get to a user by ID",
-            responses = {
-                    @ApiResponse(responseCode = "200",ref = "user"),
-                    @ApiResponse(responseCode = "400",ref = "badRequest")
-            }
+            security = @SecurityRequirement(name = "token"),
+            summary = "Get a user",
+            description = "This endpoint is for get a user by token"
     )
-    public ResponseEntity retrieveById(@PathVariable Integer userId){
+    public ResponseEntity<UserDto> retrieveUser(@RequestHeader(value = "Authorization") String token){
 
-        try {
-            UserDto user = userService.retrieveById(userId);
+        String id = jwt.getKey(token);
+        if (jwt.verifyToken(token)) {
+            UserDto user = null;
+            try {
+                user = userService.retrieveById(Integer.valueOf(id));
+            } catch (ResourceNotFoundException e) {
+                System.out.println(e.getMessage());
+                return new ResponseEntity("el usuario no ha sido encontrado", HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity(user, HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity("el usuario no ha sido encontrado", HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity("Acceso denegado", HttpStatus.UNAUTHORIZED);
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/delete")
     @Operation(
             summary = "Delete a user",
             description = "This endpoint is for delete a user",
@@ -100,23 +104,28 @@ public class UserController {
                     @ApiResponse(responseCode = "400",ref = "badRequest")
             }
     )
-    public ResponseEntity delete(@PathVariable Integer userId) {
-        try {
-            userService.delete(userId);
-        } catch (ResourceNotFoundException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity delete(@RequestHeader(value = "Authorization") String token) {
 
-        return new ResponseEntity(HttpStatus.OK);
+        String id = jwt.getKey(token);
+        if (jwt.verifyToken(token)) {
+            try {
+                userService.delete(Integer.valueOf(id));
+                return new ResponseEntity(HttpStatus.OK);
+            } catch (ResourceNotFoundException e) {
+                System.out.println(e.getMessage());
+                return new ResponseEntity("accion no realizada", HttpStatus.NOT_IMPLEMENTED);
+            }
+        }
+        return new ResponseEntity("Acceso denegado", HttpStatus.UNAUTHORIZED);
+
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/edit")
     @Operation(
             summary = "Update a user",
             description = "This endpoint is for update a user"
     )
-    public ResponseEntity replace(@PathVariable Integer userId,@io.swagger.v3.oas.annotations.parameters.RequestBody(
+    public ResponseEntity replace(@RequestHeader(value = "Authorization") String token,@io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(
                     mediaType = "application/json",
                     examples = @ExampleObject(
@@ -124,39 +133,17 @@ public class UserController {
                     )
             )
     ) @RequestBody UserDto user) {
+        String id = jwt.getKey(token);
         try {
-            userService.replace(userId, user);
+            if(jwt.verifyToken(token)){
+                userService.replace(Integer.valueOf(id), user);
+                return new ResponseEntity<>("datos actualizados", HttpStatus.OK);
+            }
         } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
             return new ResponseEntity(HttpStatus.NOT_MODIFIED);
         }
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
-
-    // no usado
-    /*
-    @PatchMapping("/{userId}")
-    public void modify(@PathVariable Integer userId,
-                                 @RequestBody Map<String, Object> fieldsToModify) {
-        fieldsToModify.entrySet().stream()
-                .forEach(entry -> {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-                    Class<?> valueType = value.getClass();
-                    String valueContent = String.valueOf(value); // convert value to string
-
-                    // do something with key, valueType, and valueContent
-                    System.out.println("Key: " + key + ", Type: " + valueType.getName() + ", Content: " + valueContent);
-                });
-        /*
-        try {
-            userService.modify(userId, fieldsToModify);
-        } catch (ResourceNotFoundException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
-
-       }*/
 }
+

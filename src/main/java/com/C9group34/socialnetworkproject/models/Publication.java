@@ -32,8 +32,7 @@ public class Publication {
     @Column(name = "ratings", nullable = false)
     private Double rating;
 
-    @Column(name = "status")
-    private String status;
+
 
 
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
@@ -64,10 +63,10 @@ public class Publication {
         this.user = u;
     }
 
+
     public void setCategory(Category c){
         this.category = c;
     }
-
     public void addComment(Comment c) {
         comments.add(c);
         c.setPublication(this);
@@ -77,4 +76,15 @@ public class Publication {
         comments.remove(c);
         c.setPublication(null);
     }
+
+    public void addFavoritePublication(FavoritePublication fp) {
+        favoritePublications.add(fp);
+        fp.setPublication(this);
+    }
+
+    public void removeFavoritePublication(FavoritePublication fp) {
+        favoritePublications.remove(fp);
+        fp.setPublication(null);
+    }
+
 }

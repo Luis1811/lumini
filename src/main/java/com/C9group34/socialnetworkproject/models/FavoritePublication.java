@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@ToString
 public class FavoritePublication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +28,16 @@ public class FavoritePublication {
     public User getUser() {
         return user;
     }
-
-    public void setOrder(User u) {
+    public void setUser(User u) {
         this.user = u;
+    }
+    public Publication getPublication() {
+        return publication;
+    }
+
+    public void setPublication(Publication p) {
+        this.publication = p;
+
     }
 
 }
