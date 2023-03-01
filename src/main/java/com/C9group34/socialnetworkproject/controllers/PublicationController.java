@@ -8,8 +8,8 @@ import com.C9group34.socialnetworkproject.util.JWTutil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +53,7 @@ public class PublicationController {
     }
 
     @GetMapping("/all")
+    @Query(value = "select publications.id, publications.title, publications.description, publications.url_imgs, publications.ratings, publications.category_id, publications.user_id, users.img_profile FROM publications INNER JOIN users ON publications.user_id = users.id ORDER BY publications.id;", nativeQuery = true)
     public ResponseEntity getAll(){
         return new ResponseEntity(publicationService.getAll(), HttpStatus.OK);
     }

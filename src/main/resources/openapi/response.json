@@ -2,6 +2,7 @@
   "login": "String token",
   "logged": true,
   "userDeleted": "USER DELETED SUCCESSFUL",
+  "userUpdated": "Datos Actualizados",
   "user": {
     "id": 0,
     "name": "String name",

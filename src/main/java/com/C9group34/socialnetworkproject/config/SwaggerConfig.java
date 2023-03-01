@@ -73,6 +73,12 @@ public class SwaggerConfig {
                                 new Example().value(jsonReadFileObject.read().get("userDeleted").toString())))
         );
 
+        ApiResponse userUpdated = new ApiResponse().content(
+                new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
+                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                                new Example().value(jsonReadFileObject.read().get("userUpdated").toString())))
+        );
+
         ApiResponse badRequest = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
                         new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
@@ -87,6 +93,7 @@ public class SwaggerConfig {
         components.addResponses("createdRC",createdRC);
         components.addResponses("getAllRC",getAllRC);
         components.addResponses("userDeleted",userDeleted);
+        components.addResponses("userUpdated",userUpdated);
         components.addResponses("badRequest",badRequest);
 
         return new OpenAPI()
@@ -94,7 +101,7 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Documentation Lumini")
                         .version("1.0.1")
-                        .description("API rest for social network. use this data for the tests: email: test@gmai.com, password: test1234. This user have id 1")
+                        .description("API rest for social network. use this data for the tests: email: test@gmail.com, password: test1234. This user have id 1")
                 );
     }
 }

@@ -29,9 +29,8 @@ public class PublicationService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public List<Publication> getAll(){
-        List<Publication> p = publicationRepository.findAll();
-        return p;
+    public List<Publication> getAll() {
+        return publicationRepository.findAll();
     }
 
 
