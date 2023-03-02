@@ -69,8 +69,6 @@ public class JWTutil {
      * @return
      */
     public String getValue(String jwt) {
-        // This line will throw an exception if it is not a signed JWS (as
-        // expected)
         Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key))
                 .parseClaimsJws(jwt).getBody();
 
@@ -84,8 +82,6 @@ public class JWTutil {
      * @return
      */
     public String getKey(String jwt) {
-        // This line will throw an exception if it is not a signed JWS (as
-        // expected)
         Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key))
                 .parseClaimsJws(jwt).getBody();
 

@@ -3,16 +3,15 @@ package com.C9group34.socialnetworkproject.service;
 import com.C9group34.socialnetworkproject.dto.UserDto;
 import com.C9group34.socialnetworkproject.exceptions.ExistingResourceException;
 import com.C9group34.socialnetworkproject.exceptions.ResourceNotFoundException;
-import com.C9group34.socialnetworkproject.models.Conversation;
-import com.C9group34.socialnetworkproject.models.FavoritePublication;
-import com.C9group34.socialnetworkproject.models.Publication;
-import com.C9group34.socialnetworkproject.models.User;
+import com.C9group34.socialnetworkproject.models.*;
 import com.C9group34.socialnetworkproject.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +23,9 @@ public class UserService {
     private  UserRepository userRepository;
 
     @Transactional
-    public User register(UserDto userDto) throws ExistingResourceException {
-        User user = createNewEntity(userDto);
+    public User register(UserDto userDto) throws ExistingResourceException, NoSuchAlgorithmException, InvalidKeySpecException {
+        String encryptedPassw = Encrypt.generateStrongPasswordHash(userDto.getPassword());
+        User user = createNewEntity(userDto, encryptedPassw);
         checkForExistingUser(user.getId());
         user = userRepository.save(user);
         return user;
@@ -87,8 +87,13 @@ public class UserService {
         return Optional.ofNullable(userRepository.findByEmail(email));
     }
 
+    public Optional<User> retrieveWithoutMapToDTO(Integer userId){
+        return userRepository.findById(userId);
+    }
 
-    private User createNewEntity(UserDto userDto){
+
+    private User createNewEntity(UserDto userDto, String encryptedPassword){
+        Double ratings = 0.0;
         new User();
         return User.builder().name(userDto.getName())
                 .surname(userDto.getSurname())
@@ -98,8 +103,8 @@ public class UserService {
                 .publications(new ArrayList<Publication>())
                 .favoritePublications(new ArrayList<FavoritePublication>())
                 .conversations(new ArrayList<Conversation>())
-                .password(userDto.getPassword())
-                .ratings(userDto.getRatings())
+                .password(encryptedPassword)
+                .ratings(ratings)
                 .build();
     }
 
@@ -146,6 +151,7 @@ public class UserService {
                 .surname(user.getSurname())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                 .imgProfile(user.getImgProfile())
                 .password(user.getPassword())
                 .ratings(user.getRatings())
                 .build());

@@ -1,6 +1,7 @@
 package com.C9group34.socialnetworkproject.controllers;
 
 import com.C9group34.socialnetworkproject.dto.UserDto;
+import com.C9group34.socialnetworkproject.models.Encrypt;
 import com.C9group34.socialnetworkproject.models.User;
 import com.C9group34.socialnetworkproject.service.UserService;
 import com.C9group34.socialnetworkproject.util.JWTutil;
@@ -14,7 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 
 @RestController
@@ -41,7 +43,7 @@ public class AuthUserController {
                             value = "{ \"email\" : \"luis@example.com\", \"password\" : \"123456789\" }"
                     )
             )
-    ) @RequestBody UserDto userDto) {
+    ) @RequestBody UserDto userDto) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         Optional<User> checkedUser = userService.getUserByEmail(userDto.getEmail());
         if(checkedUser.isEmpty()){
@@ -49,17 +51,18 @@ public class AuthUserController {
 
         }
         User u = checkedUser.get();
-        if(!Objects.equals(u.getPassword(), userDto.getPassword())){
-            return new ResponseEntity<>("PASSWORD INCORRECT", HttpStatus.UNAUTHORIZED);
+        if(Encrypt.validatePassword(userDto.getPassword(), u.getPassword())){
+            String t = jwt.create(String.valueOf(u.getId()), u.getEmail()); // generando un
+            // token devuelto para ser almacenado en cliente
+            return new ResponseEntity(t,HttpStatus.OK );
+
         }
-        String t = jwt.create(String.valueOf(u.getId()), u.getEmail()); // generando un
-        // token devuelto para ser almacenado en cliente
-        return new ResponseEntity(t,HttpStatus.OK );
+        return new ResponseEntity<>("PASSWORD INCORRECT", HttpStatus.NOT_FOUND);
+
     }
 
     @GetMapping("/logged")
     @Operation(
-            security = @SecurityRequirement(name = "token"),
             summary = "Logged verify",
             description = "This endpoint return TRUE if the user is logged",
             responses = {

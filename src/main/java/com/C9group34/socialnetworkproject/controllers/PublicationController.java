@@ -2,12 +2,14 @@ package com.C9group34.socialnetworkproject.controllers;
 
 import com.C9group34.socialnetworkproject.dto.PublicationDto;
 import com.C9group34.socialnetworkproject.exceptions.ResourceNotFoundException;
+import com.C9group34.socialnetworkproject.models.Publication;
 import com.C9group34.socialnetworkproject.service.PublicationService;
 import com.C9group34.socialnetworkproject.service.UserService;
 import com.C9group34.socialnetworkproject.util.JWTutil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/users/publications")
-
 @CrossOrigin
 public class PublicationController {
 
@@ -38,7 +39,7 @@ public class PublicationController {
             content = @Content(
                     mediaType = "application/json",
                     examples = @ExampleObject(
-                            value = "{ \"title\": \"string\", \"description\": \"string\", \"img\": \"string\", \"category\": 1 }"
+                            value = "{ \"title\": \"string\", \"description\": \"string\", \"urlImg\": \"string\", \"category\": 1 }"
                     )
             )
     ) @RequestBody PublicationDto publicationDTO)
@@ -52,13 +53,11 @@ public class PublicationController {
 
     }
 
-    @GetMapping("/all")
-    @Query(value = "select publications.id, publications.title, publications.description, publications.url_imgs, publications.ratings, publications.category_id, publications.user_id, users.img_profile FROM publications INNER JOIN users ON publications.user_id = users.id ORDER BY publications.id;", nativeQuery = true)
-    public ResponseEntity getAll(){
-        return new ResponseEntity(publicationService.getAll(), HttpStatus.OK);
-    }
 
-    @GetMapping
+    @GetMapping("/all")
+    @Operation(
+            summary = "Get all publications"
+    )
     public ResponseEntity retrieve(@RequestHeader(value = "Authorization") String token){
         String id = jwt.getKey(token);
         if (jwt.verifyToken(token)){
@@ -79,7 +78,7 @@ public class PublicationController {
         String userId = jwt.getKey(token);
         if (jwt.verifyToken(token)){
             try {
-                publicationDto = publicationService.retrieveById(publicationId, Integer.valueOf(userId));
+                publicationDto = publicationService.retrieveById(publicationId);
                 return new ResponseEntity(publicationDto, HttpStatus.OK);
             } catch (ResourceNotFoundException e) {
                 throw new RuntimeException(e);
@@ -104,8 +103,19 @@ public class PublicationController {
     }
 
     @PutMapping("/{publicationId}")
+    @Operation(
+            summary = "Update publication"
+    )
     public ResponseEntity replace(@RequestHeader(value = "Authorization") String token,
                                   @PathVariable Integer publicationId,
+                                  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                                          content = @Content(
+                                                  mediaType = "application/json",
+                                                  examples = @ExampleObject(
+                                                          value = "{ \"title\": \"string\", \"description\": \"string\", \"urlImg\": \"string\" }"
+                                                  )
+                                          )
+                                  )
                                   @RequestBody PublicationDto publicationDTO) {
         String id = jwt.getKey(token);
         if (jwt.verifyToken(token)){

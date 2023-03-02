@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 
 @RestController
 @RequestMapping("/users")
@@ -42,14 +45,20 @@ public class UserController {
             content = @Content(
                     mediaType = "application/json",
                     examples = @ExampleObject(
-                            value = "{\"name\" : \"Luis\", \"surname\" : \"Uzcategui\", \"email\" : \"luis@example.com\", \"password\" : \"123456789\", \"phone\" : \"+593979010717\", \"img_profile\" : \"URL\" }"
+                            value = "{\"name\" : \"Luis\", \"surname\" : \"Uzcategui\", \"email\" : \"luis@example.com\", \"password\" : \"123456789\", \"phone\" : \"+593979010717\", \"imgProfile\" : \"URL\" }"
                     )
             )
     ) @RequestBody UserDto u){
 
         User user = null;
         try {
-            user = userService.register(u);
+            try {
+                user = userService.register(u);
+            } catch (NoSuchAlgorithmException e) {
+                System.out.println(e.getMessage());
+            } catch (InvalidKeySpecException e) {
+                System.out.println(e.getMessage());
+            }
         } catch (ExistingResourceException e) {
             System.out.println(e.getMessage());
             return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
@@ -75,7 +84,6 @@ public class UserController {
 
     @GetMapping("/get")
     @Operation(
-            security = @SecurityRequirement(name = "token"),
             summary = "Get a user",
             description = "This endpoint is for get a user by token"
     )

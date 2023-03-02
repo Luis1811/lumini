@@ -1,5 +1,6 @@
 package com.C9group34.socialnetworkproject.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,8 +24,9 @@ public class Comment {
     @JoinColumn(name = "publication_id")
     private Publication publication;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore
     @JoinColumn(name = "creator_id")
     private User user;
 

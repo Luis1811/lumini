@@ -17,9 +17,9 @@ public class PublicationDto {
     private Integer id;
     private String title;
     private String description;
-    private String img;
+    private String urlImg;
     private Double rating;
-    private String userProfileImg;
+    private String userImgProfile;
     private List<CommentDto> comments;
     private Integer category;
 

@@ -26,8 +26,7 @@ import java.io.IOException;
 )
 public class SwaggerConfig {
 
-
-
+    
     @Bean
     public OpenAPI baseOpenAPI() throws IOException {
 
