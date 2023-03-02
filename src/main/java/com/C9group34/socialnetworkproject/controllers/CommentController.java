@@ -73,14 +73,8 @@ public class CommentController {
                     @ApiResponse(responseCode = "400",ref = "badRequest")
             }
     )
-    public ResponseEntity retrieve(@RequestHeader(value = "Authorization") String token,
-                                   @PathVariable Integer publicationId) {
-
-        if (jwt.verifyToken(token)) {
-            return new ResponseEntity(commentService.retrieveAll(publicationId), HttpStatus.OK);
-
-        }
-        return new ResponseEntity("Acceso denegado", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity retrieve(@PathVariable Integer publicationId) {
+        return new ResponseEntity(commentService.retrieveAll(publicationId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{commentId}")
