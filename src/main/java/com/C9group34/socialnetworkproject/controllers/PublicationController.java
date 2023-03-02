@@ -58,17 +58,8 @@ public class PublicationController {
     @Operation(
             summary = "Get all publications"
     )
-    public ResponseEntity retrieve(@RequestHeader(value = "Authorization") String token){
-        String id = jwt.getKey(token);
-        if (jwt.verifyToken(token)){
-            try {
-                return new ResponseEntity(publicationService.retrieveAll(Integer.valueOf(id)), HttpStatus.OK);
-            } catch (ResourceNotFoundException e) {
-                System.out.println(e.getMessage());
-                return new ResponseEntity(HttpStatus.NOT_FOUND);
-            }
-        }
-        return new ResponseEntity<>("Accion no realizada", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity retrieve() throws ResourceNotFoundException {
+        return new ResponseEntity(publicationService.retrieveAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{publicationId}")

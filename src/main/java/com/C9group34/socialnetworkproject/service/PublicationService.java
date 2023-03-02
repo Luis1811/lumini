@@ -54,11 +54,7 @@ public class PublicationService {
     }
 
 
-    public List<PublicationDto> retrieveAll(Integer userId) throws ResourceNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new ResourceNotFoundException("El id del usuario que está ingresando no existe.");
-        }
+    public List<PublicationDto> retrieveAll() throws ResourceNotFoundException {
         List<Publication> publications = publicationRepository.findAll();
         List<PublicationDto> listToReturn = new ArrayList<>();
         publications.forEach(p -> listToReturn.add(mapToDTO(p)));
