@@ -34,7 +34,7 @@ public class UserController {
             summary = "Create new use",
             description = "With endpoint can you created a new user",
             responses = {
-                    @ApiResponse(responseCode = "201",ref = "created"),
+                    @ApiResponse(responseCode = "201",ref = "user"),
                     @ApiResponse(responseCode = "400",ref = "badRequest")
             }
     )

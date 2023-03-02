@@ -76,9 +76,10 @@ public class PublicationController {
     public ResponseEntity retrieveById(@RequestHeader(value = "Authorization") String token,
                                        @PathVariable Integer publicationId){
         PublicationDto publicationDto = null;
+        String userId = jwt.getKey(token);
         if (jwt.verifyToken(token)){
             try {
-                publicationDto = publicationService.retrieveById(publicationId);
+                publicationDto = publicationService.retrieveById(publicationId, Integer.valueOf(userId));
                 return new ResponseEntity(publicationDto, HttpStatus.OK);
             } catch (ResourceNotFoundException e) {
                 throw new RuntimeException(e);

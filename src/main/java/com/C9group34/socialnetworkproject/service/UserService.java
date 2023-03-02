@@ -72,6 +72,7 @@ public class UserService {
                 .surname(userDTO.getSurname())
                 .email(userDTO.getEmail())
                 .phone(userDTO.getPhone())
+                .imgProfile(userDTO.getImgProfile())
                 .password(userDTO.getPassword())
                 .imgProfile(userDTO.getImgProfile())
                 .publications(new ArrayList<Publication>())
@@ -105,7 +106,6 @@ public class UserService {
 
     private User mapToEntity(UserDto userDto) {
 
-        String imgUrl = "";
         new User();
         return User.builder().name(userDto.getName())
                 .surname(userDto.getSurname())

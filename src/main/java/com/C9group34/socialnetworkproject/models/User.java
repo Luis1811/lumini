@@ -82,9 +82,7 @@ public class User {
 
     public void addFavoritePublication(FavoritePublication fp) {
         favoritePublications.add(fp);
-
         fp.setUser(this);
-
     }
 
     public void removeFavoritePublication(FavoritePublication fp) {

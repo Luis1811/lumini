@@ -38,7 +38,7 @@ public class FavoritePublicationController {
             } catch (ResourceNotFoundException e) {
                 System.out.println(e.getMessage());
             }
-            return new ResponseEntity<>(favoriteDto.getId(), HttpStatus.CREATED);
+            return new ResponseEntity<>(favoriteDto, HttpStatus.CREATED);
         }
         return new ResponseEntity("Acceso denegado", HttpStatus.UNAUTHORIZED);
     }
