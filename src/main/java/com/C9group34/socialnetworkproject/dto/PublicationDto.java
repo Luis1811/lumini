@@ -4,7 +4,6 @@ package com.C9group34.socialnetworkproject.dto;
 import lombok.*;
 
 
-import java.io.File;
 import java.util.List;
 
 @Builder

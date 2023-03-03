@@ -1,11 +1,13 @@
 package com.C9group34.socialnetworkproject.service;
 
 
+import com.C9group34.socialnetworkproject.dto.CategoryDto;
 import com.C9group34.socialnetworkproject.models.Category;
 import com.C9group34.socialnetworkproject.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,4 +23,5 @@ public class CategoryService {
     public List<Category> getAll(){
         return categoryRepository.findAll();
     }
+
 }

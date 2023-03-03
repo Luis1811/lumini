@@ -1,10 +1,12 @@
 package com.C9group34.socialnetworkproject.service;
 
 
+import com.C9group34.socialnetworkproject.dto.CommentDto;
 import com.C9group34.socialnetworkproject.dto.PublicationDto;
 import com.C9group34.socialnetworkproject.dto.UserDto;
 import com.C9group34.socialnetworkproject.exceptions.ResourceNotFoundException;
 import com.C9group34.socialnetworkproject.models.Category;
+import com.C9group34.socialnetworkproject.models.Comment;
 import com.C9group34.socialnetworkproject.models.Publication;
 import com.C9group34.socialnetworkproject.models.User;
 import com.C9group34.socialnetworkproject.repository.CategoryRepository;
@@ -95,7 +97,6 @@ public class PublicationService {
                 .title(publicationDto.getTitle())
                 .description(publicationDto.getDescription())
                 .urlImg(publicationDto.getUrlImg())
-
                 .user(publicationToReplace.getUser())
                 .build();
         publicationRepository.save(updatedPublication);
@@ -122,11 +123,13 @@ public class PublicationService {
     private PublicationDto mapToDTO(Publication publication) {
         // agregado de prueba
         String userImg = publication.getUser().getImgProfile();
+        Integer categoryId = publication.getCategory().getId();
         return  new PublicationDto().builder().id(publication.getId())
                 .title(publication.getTitle())
                 .description(publication.getDescription())
                 .urlImg(publication.getUrlImg())
                 .userImgProfile(userImg)
+                .category(categoryId)
                 .rating(publication.getRating())
                 .build();
 
